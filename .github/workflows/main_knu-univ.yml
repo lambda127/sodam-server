@@ -56,11 +56,14 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1A1CEAA7A61B4AD19AD98A871CB04E96 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_44325A69214A47D19645E42C244FCEC6 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7B317CAB07004987B8D1B0836B75D1F3 }}
-
+     
+      - name: List downloaded artifacts
+        run: ls -al
+      
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'knu-univ'
           slot-name: 'Production'
-          package: 'main/build/libs/main.jar'
+          package: 'main.jar'
