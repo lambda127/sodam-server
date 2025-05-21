@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy JAR app to Azure Web App - knu-univ
 
 on:
@@ -13,25 +10,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up Java version
+      - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'microsoft'
 
-      - name: Build with Maven
-        run: mvn clean install
+      - name: Grant execute permission for Gradle wrapper
+        run: chmod +x ./gradlew
 
-      - name: Upload artifact for deployment job
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: main/build/libs/*.jar
 
   deploy:
     runs-on: ubuntu-latest
@@ -40,21 +41,21 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
-  
+      id-token: write
+      contents: read
+
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: java-app
-      
-      - name: Login to Azure
+
+      - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1A1CEAA7A61B4AD19AD98A871CB04E96 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_44325A69214A47D19645E42C244FCEC6 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7B317CAB07004987B8D1B0836B75D1F3 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D870B6BC14514052849A93396A0F7117 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_DF6C8A08A1954868BB35F6D2B41A7FD9 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_867928502F8740059FF00541A293E622 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -63,4 +64,3 @@ jobs:
           app-name: 'knu-univ'
           slot-name: 'Production'
           package: '*.jar'
-          
