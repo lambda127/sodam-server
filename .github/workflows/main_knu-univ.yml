@@ -28,7 +28,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build
         env:
-          DB_URL: ${{ secrets.DB_CLOUD_HOST }}
+          DB_CLOUD_HOST: ${{ secrets.DB_CLOUD_HOST }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
