@@ -1,6 +1,6 @@
-package com.sodam.review.repository;
+package com.sodam.place.repository;
 
-import com.sodam.review.entity.Place;
+import com.sodam.place.entity.Place;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

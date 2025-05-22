@@ -1,5 +1,6 @@
 package com.sodam.review.entity;
 
+import com.sodam.place.entity.Place;
 import jakarta.persistence.*;
 import lombok.*;
 
