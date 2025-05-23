@@ -1,4 +1,4 @@
-package com.sodam;
+package com.sodam.Domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,5 +1,6 @@
-package com.sodam;
+package com.sodam.Controller;
 
+import com.sodam.Service.KakaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
