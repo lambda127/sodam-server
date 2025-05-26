@@ -1,6 +1,9 @@
 spring:
+  application:
+    name: main
+
   datasource:
-    url: jdbc:mysql://${DB_CLOUD_HOST}:3306/sodam
+    url: jdbc:mysql://${DB_CLOUD_HOST}:3306/sodamsodam_db
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,3 +15,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+kakao:
+  api_key: ${API_KEY}
+  redirect_uri: ${REDIRECT_URI}
