@@ -1,11 +1,11 @@
-package com.sodam.API;
+package com.sodam.login.API;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sodam.Repository.KakaoRepository;
-import com.sodam.Service.KakaoService;
-import com.sodam.Domain.KakaoUser;
+import com.sodam.login.Repository.KakaoRepository;
+import com.sodam.login.Service.KakaoService;
+import com.sodam.login.Domain.KakaoUser;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

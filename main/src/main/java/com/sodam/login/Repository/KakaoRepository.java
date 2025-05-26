@@ -1,6 +1,6 @@
-package com.sodam.Repository;
+package com.sodam.login.Repository;
 
-import com.sodam.Domain.KakaoUser;
+import com.sodam.login.Domain.KakaoUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

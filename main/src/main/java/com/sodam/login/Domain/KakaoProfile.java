@@ -1,4 +1,4 @@
-package com.sodam.Domain;
+package com.sodam.login.Domain;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
