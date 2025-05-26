@@ -1,6 +1,6 @@
-package com.sodam.Service;
+package com.sodam.login.Service;
 
-import com.sodam.API.KakaoApi;
+import com.sodam.login.API.KakaoApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.sodam.Service;
+package com.sodam.login.Service;
 
 import org.springframework.stereotype.Service;
 
