@@ -66,15 +66,6 @@ jobs:
       - name: List downloaded artifacts
         run: ls -al
 
-      - name: Set Azure Web App environment variables
-        run: |
-          az webapp config appsettings set --name knu-univ --resource-group DefaultResourceGroup-EUS --settings \
-            DB_CLOUD_HOST="${{ secrets.DB_CLOUD_HOST }}" \
-            DB_USERNAME="${{ secrets.DB_USERNAME }}" \
-            DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
-            API_KEY="${{ secrets.API_KEY }}" \
-            REDIRECT_URI="${{ secrets.REDIRECT_URI }}"
-      
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -82,3 +73,9 @@ jobs:
           app-name: 'knu-univ'
           slot-name: 'Production'
           package: 'main.jar'
+          app-settings: |
+            DB_CLOUD_HOST=${{ secrets.DB_CLOUD_HOST }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            API_KEY=${{ secrets.API_KEY }}
+            REDIRECT_URI=${{ secrets.REDIRECT_URI }}
