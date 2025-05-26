@@ -1,4 +1,4 @@
-package com.sodam.place.entity;
+package com.sodam.common.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
