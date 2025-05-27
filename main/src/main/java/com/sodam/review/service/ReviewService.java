@@ -4,6 +4,7 @@ import com.sodam.common.entity.Place;
 import com.sodam.common.entity.UserInfo;
 import com.sodam.common.repository.PlaceRepository;
 import com.sodam.common.repository.UserInfoRepository;
+import com.sodam.common.service.FileStorageService;
 import com.sodam.review.dto.PostReviewRequest;
 import com.sodam.review.dto.ReviewDto;
 import com.sodam.review.entity.Review;
@@ -21,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
