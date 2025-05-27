@@ -30,9 +30,6 @@ public class Place {
     @Column(name = "longitude", precision = 10, scale = 7)
     private BigDecimal longitude;
 
-    @Column(name = "tags")
-    private String tags;
-
     @Column(name = "created_at", insertable = false, updatable = false)
     private Timestamp created_at;
 

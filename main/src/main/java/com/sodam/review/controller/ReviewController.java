@@ -19,25 +19,25 @@ public class ReviewController {
 
     @PostMapping("/post")
     public ResponseEntity<ReviewDto> postReview(
-            @RequestBody PostReviewRequest request,
+            @RequestPart PostReviewRequest request,
             @RequestPart(value = "images", required = false) List<MultipartFile> images
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 reviewService.postReview(request, images));
     }
 
-    @DeleteMapping("/del")
+    @DeleteMapping("/{reviewId}")
     public ResponseEntity<ReviewDto> removeReview(
-            @RequestParam Long id
+            @PathVariable Long reviewId
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(
-                reviewService.removeReview(id));
+                reviewService.removeReview(reviewId));
     }
 
     @GetMapping("")
     public ResponseEntity<List<ReviewDto>> getReviews(
-            @RequestParam String place_id,
-            @RequestParam(required = false) String last_id,
+            @RequestParam Long place_id,
+            @RequestParam(required = false) Long last_id,
             @RequestParam(defaultValue = "10") int size
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(

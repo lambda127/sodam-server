@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,34 +44,37 @@ public class ReviewService {
                 .place(place)
                 .content(request.getContent())
                 .build();
+        Review savedReview = reviewRepository.save(review);
+
         List<ReviewTag> reviewTags = new ArrayList<>();
         for (String tag : request.getTags()) {
             ReviewTag reviewTag = ReviewTag.builder()
-                    .review(review)
+                    .review(savedReview)
                     .content(tag)
                     .build();
             reviewTags.add(reviewTag);
         }
 
-        List<ReviewPhoto> fileUrls = new ArrayList<>();
-        for (MultipartFile image : images) {
-            try {
-                String url = fileStorageService.store(image);
-                ReviewPhoto photo = ReviewPhoto.builder()
-                        .review(review)
-                        .photoUrl(url)
-                        .build();
-                fileUrls.add(photo);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to store image", e);
+        reviewTagRepository.saveAll(reviewTags); //태그 저장
+
+        List<ReviewPhoto> reviewPhotos = new ArrayList<>();
+        if(images != null){
+            for (MultipartFile image : images) {
+                try {
+                    String url = fileStorageService.store(image);
+                    ReviewPhoto photo = ReviewPhoto.builder()
+                            .review(review)
+                            .photoUrl(url)
+                            .build();
+                    reviewPhotos.add(photo);
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to store image", e);
+                }
             }
+            reviewPhotoRepository.saveAll(reviewPhotos); //이미지 메타데이터
         }
 
-        reviewTagRepository.saveAll(reviewTags); //태그 저장
-        reviewPhotoRepository.saveAll(fileUrls); //이미지 메타데이터
-        Review savedReview = reviewRepository.save(review);
-
-        return ReviewDto.fromEntity(savedReview, reviewTags);
+        return ReviewDto.fromEntity(savedReview, reviewTags, reviewPhotos);
     }
 
     @Transactional
@@ -78,26 +82,32 @@ public class ReviewService {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
         List<ReviewTag> reviewTag = reviewTagRepository.findByReview(review);
-        ReviewPhoto reviewPhoto = reviewPhotoRepository.findByReview(review)
-                .orElseThrow(() -> new RuntimeException("Photo not found"));
-
+        List<ReviewPhoto> reviewPhotos = reviewPhotoRepository.findByReview(review);
         reviewTagRepository.deleteAll(reviewTag);
         reviewRepository.delete(review);
-        reviewPhotoRepository.delete(reviewPhoto);
+        reviewPhotoRepository.deleteAll(reviewPhotos);
 
-        return ReviewDto.fromEntity(review, reviewTag);
+        return ReviewDto.fromEntity(review, reviewTag, reviewPhotos);
     }
 
     @Transactional(readOnly = true)
-    public List<ReviewDto> getReviews(String placeId, String lastId, int size) {
-        long cursor = (lastId == null || lastId.isEmpty()) ? 0L : Long.parseLong(lastId);
+    public List<ReviewDto> getReviews(Long placeId, Long lastId, int size) {
+        long cursor = lastId == null ? 0L : lastId;
         int pageSize = (size <= 0) ? 10 : size;
 
-        List<Review> reviews = reviewRepository.findByPlaceIdAndIdGreaterThanOrderByIdAsc(
-                Long.parseLong(placeId), cursor, PageRequest.of(0, pageSize));
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new RuntimeException("Place not found"));
 
-        for(Review review : reviews) {
+        List<Review> reviews = reviewRepository.findByPlaceAndIdGreaterThanOrderByIdAsc(
+                place, cursor, PageRequest.of(0, pageSize));
 
+        List<ReviewDto> reviewDtos = new ArrayList<>();
+        for(Review review : reviews){
+            List<ReviewPhoto> reviewPhotos = reviewPhotoRepository.findByReview(review);
+            List<ReviewTag> reviewTags = reviewTagRepository.findByReview(review);
+            reviewDtos.add(ReviewDto.fromEntity(review, reviewTags, reviewPhotos));
         }
+
+        return reviewDtos;
     }
 }
