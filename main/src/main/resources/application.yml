@@ -1,13 +1,6 @@
 spring:
-  profiles:
-    active: kth
   application:
     name: main
-
-  servlet:
-    multipart:
-      max-file-size: 20MB
-      max-request-size: 50MB
 
   datasource:
     url: jdbc:mysql://${DB_CLOUD_HOST}:3306/sodamsodam_db
