@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class KakaoController {
     }
 
     // 카카오 로그인 인증 후 사용자가 리디렉션되는 콜백 경로
-    @RequestMapping("/login/oauth2/code/kakao")
+    @RequestMapping("/api/v1/auth/kakao")
     public String kakaoLogin(@RequestParam String code){
         // 카카오에서 전달받은 인증 코드(code)를 사용해 access token 요청
         String accessToken = kakaoService.GetAccessToken(code);
@@ -40,4 +41,5 @@ public class KakaoController {
 
         return "redirect:/result";
     }
+
 }
