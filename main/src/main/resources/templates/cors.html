@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CORS Test</title>
+</head>
+<body>
+<button onclick="test()">테스트</button>
+<script>
+  function test() {
+    fetch("https://knu-univ-f4hhgjeggkg6dcbs.koreacentral-01.azurewebsites.net/api/test", {
+      method: "GET",
+      credentials: "include"
+    })
+            .then(res => res.text())
+            .then(console.log)
+            .catch(console.error);
+  }
+</script>
+</body>
+</html>
