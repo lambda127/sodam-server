@@ -1,0 +1,65 @@
+name: CI/CD using GitHub Actions & Docker
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for Gradle
+        run: chmod +x ./gradlew
+
+      # properties 등 민감 정보 생성
+      - name: Create application-api.properties
+        run: |
+          echo "DB_URL=${{ secrets.DB_URL }}" >> src/main/resources/application-api.properties
+
+      - name: Build JAR
+        run: ./gradlew clean build -x test
+
+      - name: Set artifact
+        run: echo "artifact=$(ls ./build/libs)" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: |
+          docker build -t 117ab854af14/ubuntu:latest .
+          echo "DOCKER_IMAGE=117ab854af14/ubuntu:latest" >> $GITHUB_ENV
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ env.DOCKER_IMAGE }}
+
+      - name: Set up SSH connection
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: SSH into Synology NAS and deploy
+        env:
+          NAS_USERNAME: ${{ secrets.NAS_USERNAME }}
+          NAS_PASSWORD: ${{ secrets.NAS_PASSWORD }}
+          NAS_HOST: ${{ secrets.NAS_HOST }}
+        run: |
+          sshpass -p "$NAS_PASSWORD" ssh -o StrictHostKeyChecking=no $NAS_USERNAME@$NAS_HOST << EOF
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker pull ${{ env.DOCKER_IMAGE }}
+          docker stop ubuntu || true
+          docker rm ubuntu || true
+          docker run -d --name ubuntu -p 8080:8080 ${{ env.DOCKER_IMAGE }}
+          EOF
